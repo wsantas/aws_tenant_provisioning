@@ -2,32 +2,34 @@ from selenium import webdriver
 
 browser = webdriver.Firefox()
 
-# Edith has heard about a cool new online to-do app. She goes
-# to check out its homepage
+# The DevOps has started a ticket to create a new tenant
+# The team goes to the tenant provisioning app to start.
 browser.get('http://localhost:8000')
 
-# She notices the page title and header mention to-do lists
-assert 'To-Do' in browser.title
+# The team notices tenant provisioning in the page title
+assert 'Tenant Provisioning' in browser.title
 
-# She is invited to enter a to-do item straight away
+# DevOps navigates to new tenant page
 
-# She types "Buy peacock feathers" into a text box (Edith's hobby
-# is tying fly-fishing lures)
+# DevOps IAM User
 
-# When she hits enter, the page updates, and now the page lists
-# "1: Buy peacock feathers" as an item in a to-do list
+# DevOps KMS
 
-# There is still a text box inviting her to add another item. She
-# enters "Use peacock feathers to make a fly" (Edith is very methodical)
+# DevOps S3 PArt 1
 
-# The page updates again, and now shows both items on her list
+# DevOps IAM Policies
 
-# Edith wonders whether the site will remember her list. Then she sees
-# that the site has generated a unique URL for her -- there is some
-# explanatory text to that effect.
+# DevOps DynamoDB Part 1
 
-# She visits that URL - her to-do list is still there.
+# DevOps API Gateway
 
-# Satisfied, she goes back to sleep
+# DevOps Cognito
 
+# DevOps DynamoDB Part 2
+
+# DevOps CloudWatch
+
+# DevOps S3 PArt 2
+
+# Satisfied, DevOps closes the ticket
 browser.quit()

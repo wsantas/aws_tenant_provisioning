@@ -1,35 +1,47 @@
 from selenium import webdriver
+import os
+import unittest
 
-browser = webdriver.Firefox()
 
-# The DevOps has started a ticket to create a new tenant
-# The team goes to the tenant provisioning app to start.
-browser.get('http://localhost:8000')
+class NewTenantTest(unittest.TestCase):
+    def setUp(self):
+        self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))
 
-# The team notices tenant provisioning in the page title
-assert 'Tenant Provisioning' in browser.title
+    def tearDown(self):
+        self.browser.quit()
 
-# DevOps navigates to new tenant page
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        # The DevOps has started a ticket to create a new tenant
+        # The team goes to the tenant provisioning app to start.
+        self.browser.get('http://localhost:8000')
 
-# DevOps IAM User
+        # The team notices tenant provisioning in the page title
+        self.assertIn('Tenant Provisioning', self.browser.title)
 
-# DevOps KMS
+        # DevOps navigates to new tenant page
 
-# DevOps S3 PArt 1
+        # DevOps IAM User
 
-# DevOps IAM Policies
+        # DevOps KMS
 
-# DevOps DynamoDB Part 1
+        # DevOps S3 PArt 1
 
-# DevOps API Gateway
+        # DevOps IAM Policies
 
-# DevOps Cognito
+        # DevOps DynamoDB Part 1
 
-# DevOps DynamoDB Part 2
+        # DevOps API Gateway
 
-# DevOps CloudWatch
+        # DevOps Cognito
 
-# DevOps S3 PArt 2
+        # DevOps DynamoDB Part 2
 
-# Satisfied, DevOps closes the ticket
-browser.quit()
+        # DevOps CloudWatch
+
+        # DevOps S3 PArt 2
+
+        self.fail('Finish the test!')
+
+
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')

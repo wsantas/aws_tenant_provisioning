@@ -4,7 +4,7 @@ import os
 import unittest
 
 
-class NewTenantTest(LiveServerTestCase):
+class NewTenantTest(unittest.TestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))

@@ -17,6 +17,8 @@ class NewTenantTest(unittest.TestCase):
 
         # The team notices tenant provisioning in the page title
         self.assertIn('Tenant Provisioning', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('Tenant Provisioning', header_text)
 
         # DevOps navigates to new tenant page
 
@@ -40,7 +42,7 @@ class NewTenantTest(unittest.TestCase):
 
         # DevOps S3 PArt 2
 
-        self.fail('Finish the test!')
+
 
 
 if __name__ == '__main__':

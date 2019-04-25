@@ -4,7 +4,7 @@ import os
 import unittest
 
 
-class NewTenantTest(unittest.TestCase):
+class NewTenantTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))
@@ -18,7 +18,7 @@ class NewTenantTest(unittest.TestCase):
         browser = self.browser;
         # The DevOps has started a ticket to create a new tenant
         # The team goes to the tenant provisioning app to start.
-        browser.get('http://localhost:8000')
+        browser.get(self.live_server_url)
 
         # The team notices tenant provisioning in the page title
         self.assertIn('Tenant Provisioning', browser.title)

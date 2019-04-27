@@ -26,6 +26,11 @@ class NewTenantTest(LiveServerTestCase):
         self.assertIn('Tenant Provisioning', header_text)
 
         # DevOps navigates to new tenant page
+        print(self.live_server_url+'/newTenant')
+        browser.get(self.live_server_url+'/newTenant')
+        print('*** '+browser.title)
+        self.assertIn('New', browser.title)
+
 
         # DevOps IAM User
 

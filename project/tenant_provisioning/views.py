@@ -8,4 +8,6 @@ def home_page(request):
 
 
 def new_tenant_page(request):
-    return render(request, 'new-tenant.html')
+    return render(request, 'new-tenant.html', {
+        'new_item_text': request.POST.get('client_id', ''),
+    })

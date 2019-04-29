@@ -6,6 +6,12 @@
 </head>
 <body>
     <h1>New Tenant</h1>
-    <input id="id_new_item" placeholder="Enter a client id" />
+    <form method="POST">
+        <input id="id_new_item" name="client_id"  placeholder="Enter a client id" />
+        {% csrf_token %}
+    </form>
+    <table id="id_list_table">
+        <tr><td>{{ new_item_text }}</td></tr>
+    </table>
 </body>
 </html>

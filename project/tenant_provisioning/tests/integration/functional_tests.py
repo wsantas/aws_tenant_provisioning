@@ -1,5 +1,7 @@
 from selenium import webdriver
 from django.test import LiveServerTestCase
+from selenium.webdriver.common.keys import Keys
+import time
 import os
 import unittest
 
@@ -26,8 +28,8 @@ class NewTenantTest(LiveServerTestCase):
         self.assertIn('Tenant Provisioning', header_text)
 
         # DevOps navigates to new tenant page
-        print(self.live_server_url+'/newTenant')
-        browser.get(self.live_server_url+'/newTenant')
+        print(self.live_server_url+'/newTenant/')
+        browser.get(self.live_server_url+'/newTenant/')
         print('*** '+browser.title)
         self.assertIn('New', browser.title)
 
@@ -37,7 +39,16 @@ class NewTenantTest(LiveServerTestCase):
             inputbox.get_attribute('placeholder'),
             'Enter a client id'
         )
+        inputbox.send_keys('ACME1234')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == 'ACME1234' for row in rows),
+            f"New tenant item did not appear in table. Contents were:\n{table.text}"
+        )
 
         # DevOps IAM User
 

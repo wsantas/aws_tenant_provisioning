@@ -43,13 +43,6 @@ class NewTenantTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == 'ACME1234' for row in rows),
-            f"New tenant item did not appear in table. Contents were:\n{table.text}"
-        )
-
         # DevOps IAM User
 
         # DevOps KMS

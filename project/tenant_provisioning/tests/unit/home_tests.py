@@ -17,6 +17,7 @@ class HomeTest(TestCase):
         html = response.content.decode('utf8')
         self.assertTrue(html.startswith('<html>'))
         self.assertIn('<title>Tenant Provisioning</title>', html)
+        self.assertIn('<h2><a href="/newTenant" >New</a></h2>', html)
         self.assertTrue(html.endswith('</html>'))
 
         self.assertTemplateUsed(response, 'home.html')

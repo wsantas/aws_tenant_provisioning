@@ -31,6 +31,13 @@ class NewTenantTest(LiveServerTestCase):
         print('*** '+browser.title)
         self.assertIn('New', browser.title)
 
+        # DevOps enters a new tenant id
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            inputbox.get_attribute('placeholder'),
+            'Enter a client id'
+        )
+
 
         # DevOps IAM User
 

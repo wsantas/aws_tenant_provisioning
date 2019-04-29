@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import call
 
 from django.urls import resolve
 from django.test import TestCase
@@ -13,7 +14,9 @@ class NewTenantTest(TestCase):
 
     def test_can_save_a_POST_request(self):
         response = self.client.post('/newTenant/', data={'client_id': 'New tenant'})
-        self.assertIn('id_list_table', response.content.decode())
+        self.assertIn('<input id="id_new_item" name="client_id"  placeholder="Enter a client id" />', response.content.decode())
+
+
 
 
 if __name__ == '__main__':

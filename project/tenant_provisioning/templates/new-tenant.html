@@ -6,10 +6,9 @@
 </head>
 <body>
     <h1>New Tenant</h1>
-    <form method="POST">
+    <form action="/postTenant/" method="post">
         <input id="id_new_item" name="client_id"  placeholder="Enter a client id" />
         {% csrf_token %}
     </form>
-
 </body>
 </html>

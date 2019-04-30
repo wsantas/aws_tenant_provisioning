@@ -9,6 +9,7 @@ from mock import patch, call
 import time
 import unittest
 import os, sys
+import re
 
 
 def s3_object_created_event(bucket_name, key):
@@ -27,6 +28,25 @@ def s3_object_created_event(bucket_name, key):
             }
         ]
     }
+
+
+def move_object_to_processed(s3_client, original_bucket, original_key):
+    new_key = re.sub("incoming\/", "processed/", original_key)
+    s3_client.copy_object(
+        Bucket=original_bucket,
+        Key=new_key,
+        CopySource={'Bucket': original_bucket, 'Key': original_key}
+    )
+    s3_client.delete_object(Bucket=original_bucket, Key=original_key)
+
+
+def call(event, context):
+    s3_client = boto3.client('s3')
+    record = event['Records'][0]
+    bucket = record['s3']['bucket']['name']
+    key = record['s3']['object']['key']
+
+    move_object_to_processed(s3_client, bucket, key)
 
 
 class NewTenantTest(LiveServerTestCase):
@@ -51,8 +71,8 @@ class NewTenantTest(LiveServerTestCase):
         self.assertIn('Tenant Provisioning', header_text)
 
         # DevOps navigates to new tenant page
-        print(self.live_server_url+'/newTenant/')
-        browser.get(self.live_server_url+'/newTenant/')
+        print(self.live_server_url + '/newTenant/')
+        browser.get(self.live_server_url + '/newTenant/')
         self.assertIn('New', browser.title)
 
         # DevOps enters a new tenant id
@@ -98,7 +118,9 @@ class NewTenantTest(LiveServerTestCase):
             conn = boto3.resource('s3', region_name='us-east-1')
             conn.create_bucket(Bucket="some-bucket")
             # Add a file
-            boto3.client('s3', region_name='us-east-1').put_object(Bucket="some-bucket", Key="incoming/transaction-0001.txt", Body="Hello World!")
+            boto3.client('s3', region_name='us-east-1').put_object(Bucket="some-bucket",
+                                                                   Key="incoming/transaction-0001.txt",
+                                                                   Body="Hello World!")
 
             # Run call with an event describing the file:
             call(s3_object_created_event("some-bucket", "incoming/transaction-0001.txt"), None)
@@ -111,8 +133,6 @@ class NewTenantTest(LiveServerTestCase):
             # Check that it exists in `processed/`
             obj = conn.Object("some-bucket", "processed/transaction-0001.txt").get()
             assert obj['Body'].read() == b'Hello World!'
-
-
 
 
 if __name__ == '__main__':

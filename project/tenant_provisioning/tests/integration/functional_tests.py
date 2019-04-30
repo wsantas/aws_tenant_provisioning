@@ -1,4 +1,5 @@
 import boto3
+import pytest
 from selenium import webdriver
 from django.test import LiveServerTestCase
 from selenium.webdriver.common.keys import Keys
@@ -6,8 +7,8 @@ from botocore.exceptions import ClientError
 from moto import mock_s3
 from mock import patch, call
 import time
-import os
 import unittest
+import os, sys
 
 
 def s3_object_created_event(bucket_name, key):
@@ -101,6 +102,15 @@ class NewTenantTest(LiveServerTestCase):
 
             # Run call with an event describing the file:
             call(s3_object_created_event("some-bucket", "incoming/transaction-0001.txt"), None)
+
+            # Assert the original file doesn't exist
+            with pytest.raises(ClientError) as e_info:
+                conn.Object("some-bucket", "incoming/transaction-0001.txt").get()
+                assert e_info.response['Error']['Code'] == 'NoSuchKey'
+
+            # Check that it exists in `processed/`
+            obj = conn.Object("some-bucket", "processed/transaction-0001.txt").get()
+            assert obj['Body'].read() == b'Hello World!'
 
 
 

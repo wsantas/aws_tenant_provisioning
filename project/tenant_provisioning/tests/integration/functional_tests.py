@@ -1,9 +1,31 @@
+import boto3
 from selenium import webdriver
 from django.test import LiveServerTestCase
 from selenium.webdriver.common.keys import Keys
+from botocore.exceptions import ClientError
+from moto import mock_s3
+from mock import patch, call
 import time
 import os
 import unittest
+
+
+def s3_object_created_event(bucket_name, key):
+    # NOTE: truncated event object shown here
+    return {
+        "Records": [
+            {
+                "s3": {
+                    "object": {
+                        "key": key,
+                    },
+                    "bucket": {
+                        "name": bucket_name,
+                    },
+                },
+            }
+        ]
+    }
 
 
 class NewTenantTest(LiveServerTestCase):
@@ -68,6 +90,19 @@ class NewTenantTest(LiveServerTestCase):
             any(row.text == 'ACME1234' for row in rows),
             f"New tenant item did not appear in table. Contents were:\n{table.text}"
         )
+
+    def test_handler_moves_incoming_object_to_processed(self):
+        with mock_s3():
+            # Create the bucket
+            conn = boto3.resource('s3', region_name='us-east-1')
+            conn.create_bucket(Bucket="some-bucket")
+            # Add a file
+            boto3.client('s3', region_name='us-east-1').put_object(Bucket="some-bucket", Key="incoming/transaction-0001.txt", Body="Hello World!")
+
+            # Run call with an event describing the file:
+            call(s3_object_created_event("some-bucket", "incoming/transaction-0001.txt"), None)
+
+
 
 
 if __name__ == '__main__':

@@ -79,7 +79,7 @@ class NewTenantTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
-            'Enter a client id'
+            'Enter a Tenant id'
         )
         inputbox.send_keys('ACME1234')
         inputbox.send_keys(Keys.ENTER)

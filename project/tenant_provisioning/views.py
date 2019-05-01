@@ -14,6 +14,6 @@ def new_tenant_page(request):
 def post_tenant(request):
     s3 = boto3.resource('s3')
     return render(request, 'home.html', {
-        'new_item_text': request.POST.get('client_id', ''),
+        'new_item_text': request.POST.get('tenant_id', ''),
     })
 

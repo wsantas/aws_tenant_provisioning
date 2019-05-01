@@ -13,7 +13,7 @@ class NewTenantTest(TestCase):
         self.assertEqual(found.func, new_tenant_page)
 
     def test_can_save_a_POST_request(self):
-        response = self.client.post('/postTenant/', data={'client_id': 'ACME1234'})
+        response = self.client.post('/postTenant/', data={'tenant_id': 'ACME1234'})
         self.assertIn('ACME1234', response.content.decode())
 
 

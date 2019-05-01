@@ -17,7 +17,5 @@ class NewTenantTest(TestCase):
         self.assertIn('ACME1234', response.content.decode())
 
 
-
-
 if __name__ == '__main__':
     unittest.main()

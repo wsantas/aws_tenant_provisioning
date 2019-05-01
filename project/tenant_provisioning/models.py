@@ -1,5 +1,5 @@
 from django.db import models
 
 
-class Tenant(object):
+class Tenant(models.Model):
     pass

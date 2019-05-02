@@ -13,15 +13,18 @@ class CreateIamUser:
 
     def execute(self):
         self.valid_data()
+        tenant = Tenant(tenantId=self._tenantId)
+        tenant.save()
+        return tenant
 
     def valid_data(self):
         try:
-            user_account_qs = Tenant.objects.get(tenantId=self._tenantId)
+            tenant = Tenant.objects.get(tenantId=self._tenantId)
         except Tenant.DoesNotExist:
             print('Not found')
-            user_account_qs = None
+            tenant = None
 
-        if user_account_qs is not None:
+        if tenant is not None:
             # Raise a meaningful error to be catched by the client
             error_msg = (
                 'There is an user account with {} tenant id. '

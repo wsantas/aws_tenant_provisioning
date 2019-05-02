@@ -119,3 +119,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# TODO figure out better pattern where we can checkin local_settings. Possibly drive off of an env variable
+try:
+    from local_settings import *
+except ImportError:
+    pass

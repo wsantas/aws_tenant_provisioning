@@ -18,6 +18,10 @@ class CreateIamUserTest(TestCase):
         result = self._use_case.execute()
         assert isinstance(result, Tenant)
 
+    def test_create_iam_user(self):
+        result = self._use_case.create_iam_user()
+        assert result
+
     # def test_create_iam_user_tenant_exists_exception(self):
     #     result = self._use_case.execute()
     #     assert isinstance(result, Tenant)

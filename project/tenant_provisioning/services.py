@@ -1,4 +1,6 @@
+from project import settings
 from project.tenant_provisioning.models import Tenant
+import boto3
 
 
 class TenantAlreadyExistError(Exception):
@@ -14,6 +16,9 @@ class CreateIamUser:
     def execute(self):
         self.valid_data()
         tenant = Tenant(tenantId=self._tenantId)
+
+
+
         tenant.save()
         return tenant
 
@@ -34,3 +39,26 @@ class CreateIamUser:
             raise TenantAlreadyExistError(_(error_msg))
 
         return True
+
+    def create_iam_user(self):
+        iamClient = boto3.client(
+            'iam',
+            endpoint_url=settings.AWS_IAM_ENDPOINT_URL,
+            region_name=settings.AWS_DEFAULT_REGION,
+            use_ssl=False,
+            aws_access_key_id='accesskey',
+            aws_secret_access_key='secretkey',
+        )
+        print('this is a test')
+        response = iamClient.create_user(
+            UserName=self._tenantId,
+            PermissionsBoundary='12345678901234567890',
+            Tags=[
+                {
+                    'Key': 'string',
+                    'Value': 'string'
+                },
+            ]
+        )
+        print('this is a test2')
+

@@ -170,4 +170,3 @@ venv.bak/
 \.idea/
 
 *.iml
-/project/local_settings.py

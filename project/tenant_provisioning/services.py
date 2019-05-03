@@ -45,7 +45,6 @@ class CreateIamUser:
             'iam',
             endpoint_url=settings.AWS_IAM_ENDPOINT_URL,
             region_name=settings.AWS_DEFAULT_REGION,
-            use_ssl=False,
             aws_access_key_id='accesskey',
             aws_secret_access_key='secretkey',
         )
@@ -61,4 +60,5 @@ class CreateIamUser:
             ]
         )
         print('this is a test2')
+        return True
 

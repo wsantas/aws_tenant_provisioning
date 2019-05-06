@@ -1,7 +1,8 @@
 import boto3
 import pytest
+from django.conf import settings
 from selenium import webdriver
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, override_settings
 from selenium.webdriver.common.keys import Keys
 from botocore.exceptions import ClientError
 from moto import mock_s3
@@ -10,6 +11,8 @@ import time
 import unittest
 import os, sys
 import re
+
+from services import CreateIamUser
 
 
 def s3_object_created_event(bucket_name, key):
@@ -49,9 +52,14 @@ def call(event, context):
     move_object_to_processed(s3_client, bucket, key)
 
 
+@override_settings(AWS_IAM_ENDPOINT_URL='http://localhost:4593')
 class NewTenantTest(LiveServerTestCase):
 
     def setUp(self):
+        self._use_case_iam_user = CreateIamUser(
+            tenant_id="ACME1234",
+            endpoint_url=settings.AWS_IAM_ENDPOINT_URL,
+        )
         self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))
         super(NewTenantTest, self).setUp()
 
@@ -86,6 +94,9 @@ class NewTenantTest(LiveServerTestCase):
         time.sleep(1)
 
         # DevOps IAM User
+        print(settings.AWS_IAM_ENDPOINT_URL)
+        result = self._use_case_iam_user.create_iam_user()
+        assert result
 
         # DevOps KMS
 

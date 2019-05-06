@@ -18,8 +18,6 @@ class CreateIamUser:
         self.valid_data()
         tenant = Tenant(tenant_id=self._tenant_id)
 
-
-
         tenant.save()
         return tenant
 
@@ -42,15 +40,14 @@ class CreateIamUser:
         return True
 
     def create_iam_user(self):
-        iamClient = boto3.client(
+        kms_client = boto3.client(
             'iam',
             endpoint_url=self._endpoint_url,
             region_name=settings.AWS_DEFAULT_REGION,
             aws_access_key_id='accesskey',
             aws_secret_access_key='secretkey',
         )
-        print('this is a test')
-        response = iamClient.create_user(
+        response = kms_client.create_user(
             UserName=self._tenant_id,
             PermissionsBoundary='12345678901234567890',
             Tags=[
@@ -60,6 +57,33 @@ class CreateIamUser:
                 },
             ]
         )
-        print('this is a test2')
         return True
 
+
+class CreateKMSKey:
+
+    def __init__(self,
+                 tenant_id, endpoint_url):
+        self._tenant_id = tenant_id
+        self._endpoint_url = endpoint_url
+
+    def execute(self):
+        self.valid_data()
+        return True
+
+    def valid_data(self):
+        return True
+
+    def create_kms_key(self):
+        kms_client = boto3.client(
+            'kms',
+            endpoint_url=self._endpoint_url,
+            region_name=settings.AWS_DEFAULT_REGION,
+            aws_access_key_id='accesskey',
+            aws_secret_access_key='secretkey',
+        )
+        response = kms_client.create_key(
+            policy="my policy",
+            description="my key", key_usage='ENCRYPT_DECRYPT'
+        )
+        return True

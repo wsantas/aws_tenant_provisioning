@@ -83,7 +83,7 @@ class CreateKMSKey:
             aws_secret_access_key='secretkey',
         )
         response = kms_client.create_key(
-            policy="my policy",
-            description="my key", key_usage='ENCRYPT_DECRYPT'
+            Policy="Policy",
+            Description="Policy", KeyUsage='ENCRYPT_DECRYPT'
         )
         return True

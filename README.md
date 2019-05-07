@@ -7,3 +7,16 @@ It is advisable to set the environment default to 'test' for your default test c
 Environment variable options:
 
     environment=test (test, prod, local)
+    
+    
+###### LocalStack:
+
+Used for local development to prevent unnecessary charges against AWS
+
+    https://github.com/localstack/localstack
+
+LocalStack does not yet support the kms end point, so we will leverage another tool:
+
+    https://github.com/nsmithuk/local-kms
+
+

@@ -12,7 +12,7 @@ import unittest
 import os, sys
 import re
 
-from services import CreateIamUser
+from services import CreateIamUser, CreateKMSKey
 
 
 def s3_object_created_event(bucket_name, key):
@@ -52,13 +52,18 @@ def call(event, context):
     move_object_to_processed(s3_client, bucket, key)
 
 
-@override_settings(AWS_IAM_ENDPOINT_URL='http://localhost:4593')
+@override_settings(AWS_IAM_ENDPOINT_URL='http://localhost:4593',
+                   AWS_KMS_ENDPOINT_URL='http://localhost:8080')
 class NewTenantTest(LiveServerTestCase):
 
     def setUp(self):
         self._use_case_iam_user = CreateIamUser(
             tenant_id="ACME1234",
             endpoint_url=settings.AWS_IAM_ENDPOINT_URL,
+        )
+        self._use_case_kms_key = CreateKMSKey(
+            tenant_id="ACME1234",
+            endpoint_url=settings.AWS_KMS_ENDPOINT_URL,
         )
         self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))
         super(NewTenantTest, self).setUp()
@@ -68,7 +73,8 @@ class NewTenantTest(LiveServerTestCase):
         super(NewTenantTest, self).tearDown()
 
     def test_can_start_a_list_and_retrieve_it_later(self):
-        browser = self.browser;
+        browser = self.browser
+
         # The DevOps has started a ticket to create a new tenant
         # The team goes to the tenant provisioning app to start.
         browser.get(self.live_server_url)
@@ -94,12 +100,12 @@ class NewTenantTest(LiveServerTestCase):
         time.sleep(1)
 
         # DevOps IAM User
-        print(settings.AWS_IAM_ENDPOINT_URL)
         result = self._use_case_iam_user.create_iam_user()
         assert result
 
         # DevOps KMS
-
+        result = self._use_case_kms_key.create_kms_key()
+        assert result
 
         # DevOps S3 PArt 1
 

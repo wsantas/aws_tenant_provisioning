@@ -86,4 +86,32 @@ class CreateKMSKey:
             Policy="Policy",
             Description="Policy", KeyUsage='ENCRYPT_DECRYPT'
         )
+        return response
+
+
+class CreateS3Bucket:
+
+    def __init__(self,
+                 tenant_id, endpoint_url):
+        self._tenant_id = tenant_id
+        self._endpoint_url = endpoint_url
+
+    def execute(self):
+        self.valid_data()
         return True
+
+    def valid_data(self):
+        return True
+
+    def create_s3_bucket(self):
+        kms_client = boto3.client(
+            's3',
+            endpoint_url=self._endpoint_url,
+            region_name=settings.AWS_DEFAULT_REGION,
+            aws_access_key_id='accesskey',
+            aws_secret_access_key='secretkey',
+        )
+        response = kms_client.create_bucket(
+            Bucket='accent-analytics-tenant-us-east-1-prod-aa12345678'
+        )
+        return response

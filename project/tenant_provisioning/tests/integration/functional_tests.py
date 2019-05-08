@@ -1,18 +1,14 @@
 import boto3
-import pytest
 from django.conf import settings
 from selenium import webdriver
 from django.test import LiveServerTestCase, override_settings
 from selenium.webdriver.common.keys import Keys
-from botocore.exceptions import ClientError
-from moto import mock_s3
-from mock import patch, call
 import time
 import unittest
 import os, sys
 import re
 
-from services import CreateIamUser, CreateKMSKey
+from services import CreateIamUser, CreateKMSKey, CreateS3Bucket
 
 
 def s3_object_created_event(bucket_name, key):
@@ -57,13 +53,18 @@ def call(event, context):
 class NewTenantTest(LiveServerTestCase):
 
     def setUp(self):
+        self._tenant_id = 'ACME1234'
         self._use_case_iam_user = CreateIamUser(
-            tenant_id="ACME1234",
+            tenant_id=self._tenant_id,
             endpoint_url=settings.AWS_IAM_ENDPOINT_URL,
         )
         self._use_case_kms_key = CreateKMSKey(
-            tenant_id="ACME1234",
+            tenant_id=self._tenant_id,
             endpoint_url=settings.AWS_KMS_ENDPOINT_URL,
+        )
+        self._use_case_s3_bucket = CreateS3Bucket(
+            tenant_id=self._tenant_id,
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
         )
         self.browser = webdriver.Chrome(os.path.join(os.getcwd(), 'chromedriver'))
         super(NewTenantTest, self).setUp()
@@ -105,9 +106,12 @@ class NewTenantTest(LiveServerTestCase):
 
         # DevOps KMS
         result = self._use_case_kms_key.create_kms_key()
-        assert result
+        assert result is not None
+        assert result['KeyMetadata']['KeyId'] is not None
 
-        # DevOps S3 PArt 1
+        # DevOps S3 Part 1
+        result = self._use_case_s3_bucket.create_s3_bucket()
+        assert result is not None
 
         # DevOps IAM Policies
 
@@ -129,28 +133,6 @@ class NewTenantTest(LiveServerTestCase):
             any(row.text == 'ACME1234' for row in rows),
             f"New tenant item did not appear in table. Contents were:\n{table.text}"
         )
-
-    def test_handler_moves_incoming_object_to_processed(self):
-        with mock_s3():
-            # Create the bucket
-            conn = boto3.resource('s3', region_name='us-east-1')
-            conn.create_bucket(Bucket="some-bucket")
-            # Add a file
-            boto3.client('s3', region_name='us-east-1').put_object(Bucket="some-bucket",
-                                                                   Key="incoming/transaction-0001.txt",
-                                                                   Body="Hello World!")
-
-            # Run call with an event describing the file:
-            call(s3_object_created_event("some-bucket", "incoming/transaction-0001.txt"), None)
-
-            # Assert the original file doesn't exist
-            with pytest.raises(ClientError) as e_info:
-                conn.Object("some-bucket", "incoming/transaction-0001.txt").get()
-                assert e_info.response['Error']['Code'] == 'NoSuchKey'
-
-            # Check that it exists in `processed/`
-            obj = conn.Object("some-bucket", "processed/transaction-0001.txt").get()
-            assert obj['Body'].read() == b'Hello World!'
 
 
 if __name__ == '__main__':

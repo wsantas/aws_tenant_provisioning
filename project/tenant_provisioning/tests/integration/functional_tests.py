@@ -49,7 +49,8 @@ def call(event, context):
 
 
 @override_settings(AWS_IAM_ENDPOINT_URL='http://localhost:4593',
-                   AWS_KMS_ENDPOINT_URL='http://localhost:8080')
+                   AWS_KMS_ENDPOINT_URL='http://localhost:8080',
+                   AWS_S3_ENDPOINT_URL='http://localhost:4572')
 class NewTenantTest(LiveServerTestCase):
 
     def setUp(self):

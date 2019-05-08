@@ -18,5 +18,8 @@ Used for local development to prevent unnecessary charges against AWS
 LocalStack does not yet support the kms end point, so we will leverage another tool:
 
     https://github.com/nsmithuk/local-kms
+    
+
+Currently, you must restart local stack to complete the functional tests if they were already ran once.
 
 

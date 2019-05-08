@@ -110,9 +110,17 @@ class NewTenantTest(LiveServerTestCase):
         assert result is not None
         assert result['KeyMetadata']['KeyId'] is not None
 
+        # TODO DevOps KMS Allow IAM user to Admin and Use key
+
+        # TODO Allow all ‘accent-analytics-*’ services IAM roles to use the key
+
+        # TODO Choose the option to rotate the key every year
+
         # DevOps S3 Part 1
         result = self._use_case_s3_bucket.create_s3_bucket()
         assert result is not None
+
+        # TODO Enable encryption using KMS key for specific tenant
 
         # DevOps IAM Policies
 
